@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Socratix GTM — Sindhu Yamsani</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #2a2a2a;
+    --border2: #333;
+    --text: #e8e4dc;
+    --muted: #666;
+    --muted2: #888;
+    --accent: #3b6ff5;
+    --accent-dim: rgba(59,111,245,0.12);
+    --accent-border: rgba(59,111,245,0.35);
+    --green: #22c55e;
+    --green-dim: rgba(34,197,94,0.1);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245,158,11,0.1);
+    --red: #ef4444;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,111,245,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,111,245,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 40px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+    padding: 5px 12px;
+    background: var(--accent-dim);
+  }
+  .header-meta {
+    text-align: right;
+    font-size: 11px;
+    color: var(--muted2);
+    line-height: 1.8;
+  }
+  .header-meta strong { color: var(--text); font-weight: 500; display: block; }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  h1 .accent { color: var(--accent); }
+  .lede {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--muted2);
+    max-width: 580px;
+    font-weight: 300;
+  }
+  .lede strong { color: var(--text); font-weight: 500; }
+
+  /* ── NAV ── */
+  .nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    margin-bottom: -1px;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── PANEL ── */
+  .panel { display: none; animation: fadeIn 0.25s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .sub {
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 32px;
+    max-width: 600px;
+  }
+
+  /* ── MARKET LANDSCAPE ── */
+  .stack-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 36px;
+  }
+  .stack-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 3px;
+  }
+  .stack-label {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    display: flex;
+    align-items: center;
+  }
+  .stack-cells {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+  }
+  .stack-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 12px;
+    font-size: 11px;
+    color: var(--muted2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+    transition: background 0.2s;
+  }
+  .stack-cell.highlight {
+    background: var(--accent-dim);
+    border-color: var(--accent-border);
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .stack-cell.ours {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .insight-note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--muted2);
+    margin-bottom: 32px;
+  }
+  .insight-note strong { color: var(--text); font-weight: 500; }
+
+  .comp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .comp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .comp-card:hover { border-color: var(--border2); }
+  .comp-card.featured { border-color: var(--accent-border); background: var(--accent-dim); }
+  .comp-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .comp-raise { font-size: 10px; color: var(--muted); margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .comp-body { font-size: 11.5px; line-height: 1.7; color: var(--muted2); font-weight: 300; }
+  .comp-tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+  .tag-threat { background: rgba(239,68,68,0.12); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+  .tag-layer { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+  .tag-above { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+
+  /* ── ICP ── */
+  .icp-list { display: flex; flex-direction: column; gap: 3px; }
+  .icp-item {
+    display: grid;
+    grid-template-columns: 180px 1fr 220px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+    cursor: default;
+  }
+  .icp-item:hover { border-color: var(--border2); }
+  .icp-col { padding: 18px 16px; }
+  .icp-col + .icp-col { border-left: 1px solid var(--border); }
+  .icp-company-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .icp-vertical {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+  .v-lending { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+  .v-neobank { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+  .v-payments { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+  .v-marketplace { background: rgba(239,68,68,0.08); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+  .icp-funding { font-size: 10px; color: var(--muted); }
+  .icp-pain-title {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .icp-pain-body { font-size: 11.5px; line-height: 1.7; color: var(--muted2); font-weight: 300; }
+  .icp-hook-label {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .icp-hook-text {
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--text);
+    font-style: italic;
+    font-weight: 300;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+  }
+
+  /* ── PARTNERSHIPS ── */
+  .partner-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .partner-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .partner-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .partner-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .partner-type { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .partner-body {
+    padding: 16px 20px;
+    font-size: 11.5px;
+    line-height: 1.75;
+    color: var(--muted2);
+    font-weight: 300;
+    border-bottom: 1px solid var(--border);
+  }
+  .partner-footer {
+    padding: 14px 20px;
+    background: var(--surface2);
+  }
+  .partner-footer-label {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 5px;
+  }
+  .partner-footer-text { font-size: 11.5px; line-height: 1.6; color: var(--text); font-weight: 300; }
+
+  .partner-note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    padding: 16px 20px;
+    font-size: 12px;
+    line-height: 1.75;
+    color: var(--muted2);
+  }
+  .partner-note strong { color: var(--text); font-weight: 500; }
+
+  /* ── WHY ME ── */
+  .evidence-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 32px;
+  }
+  .evidence-row {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .evidence-req {
+    padding: 18px 20px;
+    border-right: 1px solid var(--border);
+    font-size: 11.5px;
+    color: var(--muted2);
+    font-weight: 300;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .evidence-req::before { content: '◆'; color: var(--accent); font-size: 8px; flex-shrink: 0; margin-top: 4px; }
+  .evidence-proof { padding: 18px 20px; font-size: 11.5px; color: var(--text); line-height: 1.7; font-weight: 300; }
+  .evidence-proof strong { font-weight: 500; color: var(--accent); }
+
+  .gap-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--amber);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+  .gap-title { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); margin-bottom: 12px; }
+  .gap-items { display: flex; flex-direction: column; gap: 10px; }
+  .gap-item { font-size: 12px; line-height: 1.7; color: var(--muted2); font-weight: 300; padding-left: 16px; border-left: 1px solid var(--border2); }
+  .gap-item strong { color: var(--text); font-weight: 500; }
+
+  .week1-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+  }
+  .week1-day {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 14px;
+  }
+  .day-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .day-emoji { font-size: 18px; margin-bottom: 8px; }
+  .day-text { font-size: 11px; line-height: 1.65; color: var(--muted2); font-weight: 300; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-left { font-size: 11px; color: var(--muted); line-height: 1.8; }
+  .footer-left strong { color: var(--text); font-weight: 500; display: block; }
+  .footer-cta {
+    background: var(--accent);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 12px 24px;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    display: inline-block;
+    transition: background 0.2s;
+  }
+  .footer-cta:hover { background: #2a5de0; }
+
+  @media (max-width: 768px) {
+    .phases, .comp-grid, .partner-grid, .week1-grid { grid-template-columns: 1fr; }
+    .icp-item { grid-template-columns: 1fr; }
+    .icp-col + .icp-col { border-left: none; border-top: 1px solid var(--border); }
+    .evidence-row { grid-template-columns: 1fr; }
+    .evidence-req { border-right: none; border-bottom: 1px solid var(--border); }
+    .stack-cells { grid-template-columns: repeat(2, 1fr); }
+    .stack-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="badge">Founder's Associate · GTM Strategy</div>
+      <div class="header-meta">
+        <strong>Sindhu Yamsani</strong>
+        syamsan1@jh.edu<br>
+        linkedin.com/in/sindhu-yamsani<br>
+        April 2026
+      </div>
+    </div>
+    <h1>Socratix's path from<br><span class="accent">$220K → $2M ARR</span></h1>
+    <p class="lede">
+      A working GTM brief — not a cover letter. Covers the <strong>competitive landscape</strong>, the <strong>motion that breaks between $220K and $2M</strong>, the <strong>next 6 customers by name</strong>, and the <strong>3 partnership plays</strong> sitting in Socratix's existing integration list.
+    </p>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showTab('market')">01 · Market Landscape</button>
+    <button class="nav-btn" onclick="showTab('icp')">02 · ICP Targets</button>
+    <button class="nav-btn" onclick="showTab('partners')">03 · Partnership Plays</button>
+    <button class="nav-btn" onclick="showTab('why')">04 · Why Me</button>
+  </nav>
+
+  <!-- PANEL: MARKET LANDSCAPE -->
+  <div class="panel active" id="panel-market">
+
+    <div class="section-label">Fraud Stack · Where Socratix Sits</div>
+    <h2>Socratix owns the investigation layer.</h2>
+    <p class="sub">Most competitors are detection platforms. They generate alerts. Socratix is what happens after the alert — and nobody has built that layer better.</p>
+
+    <div class="stack-diagram">
+      <div class="stack-row">
+        <div class="stack-label">Detection</div>
+        <div class="stack-cells">
+          <div class="stack-cell">Sift<br><span style="font-size:9px;color:var(--muted)">$175M raised</span></div>
+          <div class="stack-cell">Sardine<br><span style="font-size:9px;color:var(--muted)">$145M raised</span></div>
+          <div class="stack-cell">FICO Falcon<br><span style="font-size:9px;color:var(--muted)">Incumbent</span></div>
+          <div class="stack-cell">Feedzai<br><span style="font-size:9px;color:var(--muted)">$2B valuation</span></div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label" style="color:var(--accent)">Investigation ✦</div>
+        <div class="stack-cells">
+          <div class="stack-cell ours">Socratix AI<br><span style="font-size:9px;opacity:0.8">Purpose-built</span></div>
+          <div class="stack-cell highlight">DataVisor Vera<br><span style="font-size:9px">Apr 2026 · Threat</span></div>
+          <div class="stack-cell" style="color:var(--muted);font-size:10px;font-style:italic">Manual analysts<br>(status quo)</div>
+          <div class="stack-cell" style="color:var(--muted);font-size:10px;font-style:italic">Unit21 agents<br>(partial)</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Case Mgmt</div>
+        <div class="stack-cells">
+          <div class="stack-cell">Unit21<br><span style="font-size:9px;color:var(--muted)">$100M raised</span></div>
+          <div class="stack-cell">Salesforce<br><span style="font-size:9px;color:var(--muted)">Integration</span></div>
+          <div class="stack-cell">Actimize<br><span style="font-size:9px;color:var(--muted)">Enterprise</span></div>
+          <div class="stack-cell">Zendesk<br><span style="font-size:9px;color:var(--muted)">Integration</span></div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-label">Identity / Data</div>
+        <div class="stack-cells">
+          <div class="stack-cell">Socure</div>
+          <div class="stack-cell">LexisNexis</div>
+          <div class="stack-cell">Alloy</div>
+          <div class="stack-cell">Persona</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-note">
+      <strong>The strategic insight:</strong> Socratix integrates with Sift, Sardine, and Unit21 — all nominally competitors. This isn't a weakness. It means Socratix is <strong>additive to every existing stack</strong>, not a replacement. The sales motion is "you already have detection; we handle what happens after." That's a much easier conversation than ripping and replacing.
+    </div>
+
+    <div class="section-label">Competitive Threats</div>
+    <div class="comp-grid">
+      <div class="comp-card featured">
+        <div class="comp-name">DataVisor "Vera"</div>
+        <div class="comp-raise">Launched April 2026 · Claims 20–30× investigation time reduction</div>
+        <div class="comp-body">Most direct competitive threat. Same speed thesis. But comes from a detection-first company adding an investigation layer — vs Socratix built investigation-first. The integration story and deployment speed (3 days) are Socratix's tactical advantage.</div>
+        <div class="comp-tag tag-threat">⚡ Active threat</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Unit21</div>
+        <div class="comp-raise">~$100M raised · Series C · Adding AI agents</div>
+        <div class="comp-body">Case management platform adding agentic features. CEO Riya Jagetia previously worked here — deep knowledge of exactly where it falls short. Unit21 is a platform; Socratix is a specialist. Specialists win in pain-point selling.</div>
+        <div class="comp-tag tag-threat">⚡ Expanding into lane</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Sardine</div>
+        <div class="comp-raise">$145M raised · Series C · Full-stack platform</div>
+        <div class="comp-body">Broad fraud + compliance platform with behavioral biometrics. Recently added AI agents for KYC and SAR reviews. Targets same ICP but requires full-stack replacement. Socratix's integration-first story is defensible here — less commitment to buy.</div>
+        <div class="comp-tag tag-above">↑ Different layer</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PANEL: ICP TARGETS -->
+  <div class="panel" id="panel-icp">
+
+    <div class="section-label">Named Targets · Pipeline Starting Point</div>
+    <h2>The next 6 customers — by name.</h2>
+    <p class="sub">These aren't random picks. Every company below shares the same structural trait: <strong>fraud ops is the operational ceiling on their growth</strong>. The cold hooks below can be sent this week.</p>
+
+    <div class="icp-list">
+
+      <div class="icp-item">
+        <div class="icp-col">
+          <span class="icp-vertical v-lending">Lending</span>
+          <div class="icp-company-name">Parafin</div>
+          <div class="icp-funding">Series B · a16z · Embedded lending for DoorDash, Shopify merchants</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-pain-title">Fraud Pain</div>
+          <div class="icp-pain-body">Merchant cash advance decisions across thousands of SMBs embedded in third-party platforms. AtoB is an exact analogue — underwriting volume that structurally outpaces any human team. The embedded model makes this worse: no direct merchant relationship means signals are harder to read.</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-hook-label">Cold Hook</div>
+          <div class="icp-hook-text">"AtoB eliminated 100+ hours/month of underwriting with Socratix. You're solving the same problem at higher volume across platform merchants — worth 20 minutes?"</div>
+        </div>
+      </div>
+
+      <div class="icp-item">
+        <div class="icp-col">
+          <span class="icp-vertical v-lending">Lending</span>
+          <div class="icp-company-name">Wayflyer</div>
+          <div class="icp-funding">Series B · Accel · Revenue-based financing for ecommerce</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-pain-title">Fraud Pain</div>
+          <div class="icp-pain-body">Revenue-based financing needs continuous merchant monitoring — not just one-time underwriting. Fraud patterns shift as merchants scale. Manual re-review is a recurring drain that scales linearly with portfolio size, making it the exact bottleneck Socratix was built for.</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-hook-label">Cold Hook</div>
+          <div class="icp-hook-text">"Your fraud exposure doesn't stop at origination — merchants change. We automate the ongoing risk monitoring your analysts are doing by hand. 3-day deployment."</div>
+        </div>
+      </div>
+
+      <div class="icp-item">
+        <div class="icp-col">
+          <span class="icp-vertical v-neobank">Neobank</span>
+          <div class="icp-company-name">Mercury</div>
+          <div class="icp-funding">Series B · Sequoia · Banking for 100K+ startups, $500M ARR</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-pain-title">Fraud Pain</div>
+          <div class="icp-pain-body">Startup banking = high-velocity account opening + ATO risk from sophisticated attackers targeting funded accounts. Account review volume scales with the startup ecosystem's growth — which has no ceiling. Super.com's marketplace playbook maps directly to Mercury's account review queue.</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-hook-label">Cold Hook</div>
+          <div class="icp-hook-text">"Super.com scaled account reviews 20× without adding headcount. You're adding thousands of startup accounts weekly — the review backlog only goes one direction."</div>
+        </div>
+      </div>
+
+      <div class="icp-item">
+        <div class="icp-col">
+          <span class="icp-vertical v-payments">Payments</span>
+          <div class="icp-company-name">Melio</div>
+          <div class="icp-funding">Series D · $4.5B valuation · B2B payments for SMBs</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-pain-title">Fraud Pain</div>
+          <div class="icp-pain-body">B2B payment fraud (vendor impersonation, ACH fraud) requires manual investigation because each case involves business context — relationships, invoice history, entity graphs — that rule engines can't evaluate. High-value, context-heavy cases are exactly where analyst time burns fastest.</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-hook-label">Cold Hook</div>
+          <div class="icp-hook-text">"B2B payment fraud cases are high-stakes and context-heavy — exactly the type that burns analyst hours and still gets escalated. We automate the investigation, not just the flag."</div>
+        </div>
+      </div>
+
+      <div class="icp-item">
+        <div class="icp-col">
+          <span class="icp-vertical v-lending">Lending</span>
+          <div class="icp-company-name">Slope</div>
+          <div class="icp-funding">YC · Series A · B2B BNPL for trade credit at checkout</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-pain-title">Fraud Pain</div>
+          <div class="icp-pain-body">B2B BNPL buyer verification at checkout speed: real businesses vs. synthetic companies opening trade credit lines. New business identity verification requires deep investigation — a manual process that directly caps approval velocity and checkout conversion.</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-hook-label">Cold Hook</div>
+          <div class="icp-hook-text">"Every B2B BNPL approval is a credit decision disguised as a checkout experience. Socratix can give you AtoB-level underwriting judgment at Slope's checkout velocity."</div>
+        </div>
+      </div>
+
+      <div class="icp-item">
+        <div class="icp-col">
+          <span class="icp-vertical v-marketplace">Marketplace</span>
+          <div class="icp-company-name">Current</div>
+          <div class="icp-funding">YC · a16z · Series D · Consumer neobank, 4M+ users</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-pain-title">Fraud Pain</div>
+          <div class="icp-pain-body">4M consumer accounts = massive chargeback dispute volume, each requiring manual review. Super.com's playbook maps directly — high review throughput with a constrained ops team. Every new user cohort adds to the backlog.</div>
+        </div>
+        <div class="icp-col">
+          <div class="icp-hook-label">Cold Hook</div>
+          <div class="icp-hook-text">"Super.com serves 30M users and 20×'d dispute review capacity with Socratix. At 4M accounts and growing, your dispute queue is the same structural problem — same fix."</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PANEL: PARTNERSHIPS -->
+  <div class="panel" id="panel-partners">
+
+    <div class="section-label">Distribution Leverage · Inbound Without Cold Outreach</div>
+    <h2>Three warm partnerships hiding in the integration list.</h2>
+    <p class="sub">Socratix already integrates with 20 platforms. Three of them have massive distribution, no investigation layer, and an incentive to co-sell. These aren't cold pitches — they're relationships that already exist.</p>
+
+    <div class="partner-grid">
+      <div class="partner-card">
+        <div class="partner-header">
+          <div class="partner-name">Stripe</div>
+          <div class="partner-type">Infrastructure · Already integrated · Massive distribution</div>
+        </div>
+        <div class="partner-body">
+          Stripe Radar detects payment fraud. Stripe has zero investigation layer. Every Stripe customer hitting chargeback thresholds or account review backlogs is a warm Socratix prospect — and they already trust Stripe. An App Marketplace listing puts Socratix in front of that distribution without a single cold email.
+        </div>
+        <div class="partner-footer">
+          <div class="partner-footer-label">What Stripe gets</div>
+          <div class="partner-footer-text">A complete fraud story for enterprise customers: detection (Radar) + investigation (Socratix). No build required. Closes a gap their largest customers feel.</div>
+        </div>
+      </div>
+
+      <div class="partner-card">
+        <div class="partner-header">
+          <div class="partner-name">Alloy</div>
+          <div class="partner-type">Compliance Automation · Already integrated · Exact ICP overlap</div>
+        </div>
+        <div class="partner-body">
+          Alloy automates KYC and onboarding. They stop at the front door. Socratix handles the fraud that walks in after onboarding. Every Alloy customer with a fraud ops team is a Socratix prospect — and Alloy's ICP (fintechs, neobanks, lenders) is an exact match. The co-sell motion is natural: "onboarding solved, ongoing ops next."
+        </div>
+        <div class="partner-footer">
+          <div class="partner-footer-label">What Alloy gets</div>
+          <div class="partner-footer-text">An upsell story and platform stickiness: "We handle onboarding. Our partner handles what happens after." Expands Alloy's value without competing with Socratix.</div>
+        </div>
+      </div>
+
+      <div class="partner-card">
+        <div class="partner-header">
+          <div class="partner-name">Socure</div>
+          <div class="partner-type">Identity Verification · Already integrated · Alert-to-resolution gap</div>
+        </div>
+        <div class="partner-body">
+          Socure scores identity risk at onboarding. When they flag a medium-risk account, someone still has to investigate it manually. Socratix closes that gap. The handoff is natural: Socure surfaces the alert, Socratix works it. Co-selling makes both products stickier for shared customers.
+        </div>
+        <div class="partner-footer">
+          <div class="partner-footer-label">What Socure gets</div>
+          <div class="partner-footer-text">A resolution story for the alerts they generate. Customers stop asking "OK, you flagged it, now what?" — a complaint every identity vendor hears constantly.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="partner-note">
+      <strong>Why start here:</strong> All three partners are already in Socratix's integration list, meaning technical trust is established. The ask isn't "will you integrate with us?" — it's "will you list us in your marketplace and mention us in your enterprise conversations?" That's a much lighter ask, and the mutual value is clear for each. Stripe is the highest-distribution play; Alloy is the fastest co-sell motion given ICP alignment; Socure is the most conceptually clean narrative.
+    </div>
+
+  </div>
+
+  <!-- PANEL: WHY ME -->
+  <div class="panel" id="panel-why">
+
+    <div class="section-label">Role Requirements → My Evidence</div>
+    <h2>Why I built this instead of just applying.</h2>
+    <p class="sub">I'm Sindhu Yamsani — MS Engineering Management at Johns Hopkins (CS track), product analyst background across fintech and healthcare. This artifact is my application — a demonstration of how I think about GTM, not a claim that I can.</p>
+
+    <div class="evidence-grid">
+
+      <div class="evidence-row">
+        <div class="evidence-req">Conduct market research and competitive analysis in fraud, risk, and AI</div>
+        <div class="evidence-proof">Built this entire brief from scratch: competitive stack diagram, positioning vs. Sardine/Feedzai/Unit21, DataVisor "Vera" threat (April 2026). At <strong>Checkpoint Surgical</strong>, I conducted 11+ customer interviews, performed market sizing and segmentation, and defined GTM success metrics from zero — same muscle. Used Latka's verified ARR data ($220K), PitchBook, and both Socratix case studies to ground every claim.</div>
+      </div>
+
+      <div class="evidence-row">
+        <div class="evidence-req">Sit in on customer calls and synthesize insights into product requirements</div>
+        <div class="evidence-proof">At <strong>Johns Hopkins Hospital</strong>, I ran 20+ qualitative stakeholder interviews with surgeons, nurses, and administrators — synthesized findings into workflow maps identifying bottlenecks that projected 33% OR turnover reduction. At <strong>Checkpoint Surgical</strong>, interview synthesis directly shaped the GTM strategy and market expansion targeting. Translating customer voice into structured requirements is my primary skill.</div>
+      </div>
+
+      <div class="evidence-row">
+        <div class="evidence-req">Write product specs (PRDs), structure roadmaps, track execution</div>
+        <div class="evidence-proof">At <strong>Deloitte</strong>, I partnered with engineering, business, and QA teams to write PRDs with acceptance criteria across 15–20 agile sprints for a $204B U.S. financial services client. Delivered 5 customer-facing lending and treasury features while keeping sprint execution aligned with broader roadmap priorities. PRD writing under enterprise constraints — not theoretical.</div>
+      </div>
+
+      <div class="evidence-row">
+        <div class="evidence-req">Support enterprise pilots, ensuring customers see impact quickly</div>
+        <div class="evidence-proof">At <strong>Deloitte</strong>, I supported automation of Salesforce-based loan workflows that cut processing time from 15 days to 2 days — an <strong>85% reduction</strong> for a $204B client. That's the same "fast time-to-value" story at the core of Socratix's AtoB case study (100+ hours/month eliminated). I know what enterprise deployment looks like and what it takes to make the impact visible quickly.</div>
+      </div>
+
+      <div class="evidence-row">
+        <div class="evidence-req">Strong analytical skills — data analysis, SQL, structured thinking</div>
+        <div class="evidence-proof">Python, SQL, Salesforce, Azure DevOps — applied in production contexts, not side projects. At <strong>Hexagon</strong>, I used usage data and stakeholder insights to prioritize MVP features, cutting release timelines by 3 weeks. At <strong>Product Space</strong>, used RICE scoring to prioritize 2 high-impact features from 6 and defined transaction volume metrics — scored 1st place. The ICP segmentation and revenue phase mapping in this brief are the same analytical process.</div>
+      </div>
+
+      <div class="evidence-row">
+        <div class="evidence-req">Drive cross-functional projects across engineering, product, and GTM</div>
+        <div class="evidence-proof">Every role I've held has been cross-functional by design. At Deloitte: engineering + business + QA. At Hopkins Hospital: surgeons + nurses + administrators. At Hexagon: stakeholders + engineering + release management. At Socratix, the FA role sits at the same intersection — and I've operated there across 4 different industries. The context changes; the coordination skill doesn't.</div>
+      </div>
+
+    </div>
+
+    <div class="gap-box">
+      <div class="gap-title">Where I'm honest about gaps</div>
+      <div class="gap-items">
+        <div class="gap-item"><strong>Enterprise sales cycle ownership:</strong> My exposure is to the product and delivery side of enterprise — not the sales side. I understand champion vs. economic buyer and multi-threaded deals conceptually, but I haven't personally owned a pipeline. The FA role is exactly the right context to develop that under founder mentorship.</div>
+        <div class="gap-item"><strong>Fraud domain depth:</strong> My fintech exposure is through lending workflow automation at Deloitte — not fraud ops specifically. The research in this brief (case studies, competitor analysis, ICP identification) is my starting point. I'd calibrate fast by shadowing customer calls in week 1 and treating every conversation as a domain interview.</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 1 Plan</div>
+    <div class="week1-grid">
+      <div class="week1-day">
+        <div class="day-label">Monday</div>
+        <div class="day-emoji">🎧</div>
+        <div class="day-text">Shadow founder on a sales call. Map objection language, customer vocabulary, and gaps between the pitch and what buyers actually respond to.</div>
+      </div>
+      <div class="week1-day">
+        <div class="day-label">Tuesday</div>
+        <div class="day-emoji">⚙️</div>
+        <div class="day-text">Set up Attio pipeline stages. Import first 25 accounts from the ICP list on this brief. Enrich with Clay for signal scoring.</div>
+      </div>
+      <div class="week1-day">
+        <div class="day-label">Wednesday</div>
+        <div class="day-emoji">✍️</div>
+        <div class="day-text">Draft 3 cold email variants using the hooks from tab 3. Get founder feedback before a single email goes out.</div>
+      </div>
+      <div class="week1-day">
+        <div class="day-label">Thursday</div>
+        <div class="day-emoji">📤</div>
+        <div class="day-text">Send first batch. Start LinkedIn connection campaign for VP Risk / Head of Lending at Tier 1 targets.</div>
+      </div>
+      <div class="week1-day">
+        <div class="day-label">Friday</div>
+        <div class="day-emoji">📊</div>
+        <div class="day-text">Review open/reply data. Write Week 1 learnings + revised Week 2 plan. Present to founders. Repeat.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      <strong>Sindhu Yamsani</strong>
+      syamsan1@jh.edu · linkedin.com/in/sindhu-yamsani<br>
+      This is a first draft — built to start a conversation, not end one.
+    </div>
+    <a href="mailto:syamsan1@jh.edu" class="footer-cta">Let's talk →</a>
+  </div>
+
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
