@@ -2,7 +2,7 @@
 
 > A working GTM brief built as part of my application for the **Founder's Associate Intern** role at [Socratix AI](https://getsocratix.ai) (YC S25).
 
-**Live site → [sindhu-socratix-founder-associate.vercel.app]([(https://sindhu-socratix-founder-associate.vercel.app)])**
+**Live site → [sindhu-socratix-founder-associate.vercel.app](https://sindhu-socratix-founder-associate.vercel.app)**
 
 ---
 
